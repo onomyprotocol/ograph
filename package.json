@@ -4,6 +4,8 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
+    "prep:mainnet": "mustache networks/mainnet.json subgraph.template.yaml > subgraph.yaml && yarn codegen",
+    "prep:rinkeby": "mustache networks/rinkeby.json subgraph.template.rinkeby.yaml > subgraph.yaml && yarn codegen",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/bondingNOM",
     "deploy:rinkeby": "graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ tpikachu/onomy-rinkeby",
     "create-local": "graph create --node http://localhost:8020/ onomyprotocol/bondingNOM",
@@ -13,5 +15,8 @@
   "dependencies": {
     "@graphprotocol/graph-cli": "0.20.0",
     "@graphprotocol/graph-ts": "0.20.0"
+  },
+  "devDependencies": {
+    "mustache": "^4.1.0"
   }
 }

@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: BondingNOM
-    network: 'rinkeby'
+    network: '{{network}}'
     source:
-      address: '0x2F05A5B07DC691284BC3329050A172fd148754cD'
+      address: '{{BondingNOM}}'
       abi: BondingNOM
-      startBlock: 8219137
+      startBlock: {{BondingNOMStartBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

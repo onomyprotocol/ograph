@@ -1,0 +1,40 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: BondingNOM
+    network: '{{network}}'
+    source:
+      address: '{{BondingNOM}}'
+      abi: BondingNOM
+      startBlock: {{BondingNOMStartBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+      abis:
+        - name: BondingNOM
+          file: ./abis/BondingNOM.json
+      eventHandlers:
+        - event: WhitelistAdminAdded(indexed address)
+          handler: handleWhitelistAdminAdded
+        - event: WhitelistAdminRemoved(indexed address)
+          handler: handleWhitelistAdminRemoved
+        - event: MinterAdded(indexed address)
+          handler: handleMinterAdded
+        - event: MinterRemoved(indexed address)
+          handler: handleMinterRemoved
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: URI(string,indexed uint256)
+          handler: handleURI
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleTransferSingle
+        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleTransferBatch
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+      file: ./src/NFT/BCCG.ts

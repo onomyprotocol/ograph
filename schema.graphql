@@ -4,3 +4,14 @@ type ExampleEntity @entity {
   previousOwner: Bytes! # address
   newOwner: Bytes! # address
 }
+
+type TransactionRecord @entity {
+  id: ID!
+  senderAddress: Bytes!
+  amountNOM: BigInt!
+  amountETH: BigInt!
+  price: BigInt!
+  supply: BigInt!
+  buyOrSell: Boolean! # 0: buy 1: sell
+  timestamp: BigInt!
+}

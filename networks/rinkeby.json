@@ -1,0 +1,5 @@
+{
+  "network": "rinkeby",
+  "BondingNOM": "0x2F05A5B07DC691284BC3329050A172fd148754cD",
+  "BondingNOMStartBlock": 8219137
+}
