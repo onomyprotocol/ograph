@@ -69,3 +69,97 @@ export class ExampleEntity extends Entity {
     this.set("newOwner", Value.fromBytes(value));
   }
 }
+
+export class TransactionRecord extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save TransactionRecord entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save TransactionRecord entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("TransactionRecord", id.toString(), this);
+  }
+
+  static load(id: string): TransactionRecord | null {
+    return store.get("TransactionRecord", id) as TransactionRecord | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get senderAddress(): Bytes {
+    let value = this.get("senderAddress");
+    return value.toBytes();
+  }
+
+  set senderAddress(value: Bytes) {
+    this.set("senderAddress", Value.fromBytes(value));
+  }
+
+  get amountNOM(): BigInt {
+    let value = this.get("amountNOM");
+    return value.toBigInt();
+  }
+
+  set amountNOM(value: BigInt) {
+    this.set("amountNOM", Value.fromBigInt(value));
+  }
+
+  get amountETH(): BigInt {
+    let value = this.get("amountETH");
+    return value.toBigInt();
+  }
+
+  set amountETH(value: BigInt) {
+    this.set("amountETH", Value.fromBigInt(value));
+  }
+
+  get price(): BigInt {
+    let value = this.get("price");
+    return value.toBigInt();
+  }
+
+  set price(value: BigInt) {
+    this.set("price", Value.fromBigInt(value));
+  }
+
+  get supply(): BigInt {
+    let value = this.get("supply");
+    return value.toBigInt();
+  }
+
+  set supply(value: BigInt) {
+    this.set("supply", Value.fromBigInt(value));
+  }
+
+  get buyOrSell(): boolean {
+    let value = this.get("buyOrSell");
+    return value.toBoolean();
+  }
+
+  set buyOrSell(value: boolean) {
+    this.set("buyOrSell", Value.fromBoolean(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+}

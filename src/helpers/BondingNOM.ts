@@ -3,11 +3,11 @@ import { store } from "@graphprotocol/graph-ts/index";
 import { Transaction } from '../../generated/BondingNOM/BondingNOM';
 import { TransactionRecord } from "../../generated/schema";
 
-export function genereateID(args:Array<any>) {
+export function genereateID(args:Array<string>): string {
   return args.join('-');
 }
 
-export function loadOrCreate(event:Transaction) {
+export function loadOrCreate(event:Transaction): void {
   let timeStamp = event.block.timestamp;
   // ID: ${msg.sender}-${timeStamp}-${buy/sell}
   let id = genereateID([event.params._by.toHexString(), timeStamp.toString(), event.params.buyOrSell.toString()]);
