@@ -20,4 +20,4 @@ Compiles a subgraph to WebAssembly.
 Generates subgraph.yaml based on subgraph template for the speicific network and network configuration
 
 ### `yarn deploy`, `yarn deploy:rinkeby`
-Deploys a subgraph to a Graph Node(onomyprotocol/bondingNOM)
+Deploys a subgraph to a Graph Node(onomyprotocol/ograph)

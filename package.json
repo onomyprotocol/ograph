@@ -1,16 +1,16 @@
 {
-  "name": "bondingNOM",
+  "name": "Ograph",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
     "prep:mainnet": "mustache networks/mainnet.json subgraph.template.yaml > subgraph.yaml && yarn codegen",
     "prep:rinkeby": "mustache networks/rinkeby.json subgraph.template.rinkeby.yaml > subgraph.yaml && yarn codegen",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/bondingNOM",
-    "deploy:rinkeby": "graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ tpikachu/onomy-rinkeby",
-    "create-local": "graph create --node http://localhost:8020/ onomyprotocol/bondingNOM",
-    "remove-local": "graph remove --node http://localhost:8020/ onomyprotocol/bondingNOM",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 onomyprotocol/bondingNOM"
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/ograph",
+    "deploy:rinkeby": "graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/ograph",
+    "create-local": "graph create --node http://localhost:8020/ onomyprotocol/ograph",
+    "remove-local": "graph remove --node http://localhost:8020/ onomyprotocol/ograph",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 onomyprotocol/ograph"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.20.0",
