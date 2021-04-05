@@ -14,14 +14,11 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - OwnershipTransferred
         - Transaction
       abis:
         - name: BondingNOM
           file: ./abis/BondingNOM.json
       eventHandlers:
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: Transaction(indexed address,uint256,uint256,uint256,uint256,string)
+        - event: Transaction(indexed address,uint256,uint256,uint256,uint256,string,int128)
           handler: handleTransaction
       file: ./src/BondingNOM.ts

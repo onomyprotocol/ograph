@@ -19,22 +19,6 @@ dataSources:
         - name: BondingNOM
           file: ./abis/BondingNOM.json
       eventHandlers:
-        - event: WhitelistAdminAdded(indexed address)
-          handler: handleWhitelistAdminAdded
-        - event: WhitelistAdminRemoved(indexed address)
-          handler: handleWhitelistAdminRemoved
-        - event: MinterAdded(indexed address)
-          handler: handleMinterAdded
-        - event: MinterRemoved(indexed address)
-          handler: handleMinterRemoved
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: URI(string,indexed uint256)
-          handler: handleURI
-        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
-          handler: handleTransferSingle
-        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
-          handler: handleTransferBatch
-        - event: ApprovalForAll(indexed address,indexed address,bool)
-          handler: handleApprovalForAll
-      file: ./src/NFT/BCCG.ts
+        - event: Transaction(indexed address,uint256,uint256,uint256,uint256,string,int128)
+          handler: handleTransaction
+      file: ./src/BondingNOM.ts

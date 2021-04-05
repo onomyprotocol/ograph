@@ -22,6 +22,7 @@ export function loadOrCreate(event:Transaction): void {
     transactionRecord.senderAddress = event.params._by;
     transactionRecord.price = event.params.price;
     transactionRecord.supply= event.params.supply;
+    transactionRecord.slippage = event.params.slippage;
   } else{
     // TODO: Check if the duplicated case
   }
