@@ -7,4 +7,5 @@ type TransactionRecord @entity {
   supply: BigInt!
   buyOrSell: Boolean! # 0: buy 1: sell
   timestamp: BigInt!
+  slippage: BigInt!
 }

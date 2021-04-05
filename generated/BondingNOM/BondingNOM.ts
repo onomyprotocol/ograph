@@ -68,11 +68,47 @@ export class Transaction__Params {
   get buyOrSell(): string {
     return this._event.parameters[5].value.toString();
   }
+
+  get slippage(): BigInt {
+    return this._event.parameters[6].value.toBigInt();
+  }
 }
 
 export class BondingNOM extends ethereum.SmartContract {
   static bind(address: Address): BondingNOM {
     return new BondingNOM("BondingNOM", address);
+  }
+
+  NOMSupToETH(supplyTop: BigInt, supplyBot: BigInt): BigInt {
+    let result = super.call(
+      "NOMSupToETH",
+      "NOMSupToETH(uint256,uint256):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(supplyTop),
+        ethereum.Value.fromUnsignedBigInt(supplyBot)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_NOMSupToETH(
+    supplyTop: BigInt,
+    supplyBot: BigInt
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "NOMSupToETH",
+      "NOMSupToETH(uint256,uint256):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(supplyTop),
+        ethereum.Value.fromUnsignedBigInt(supplyBot)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   NOMTokenContract(): Address {
@@ -113,223 +149,19 @@ export class BondingNOM extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  decimals(): i32 {
-    let result = super.call("decimals", "decimals():(uint8)", []);
-
-    return result[0].toI32();
-  }
-
-  try_decimals(): ethereum.CallResult<i32> {
-    let result = super.tryCall("decimals", "decimals():(uint8)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toI32());
-  }
-
-  owner(): Address {
-    let result = super.call("owner", "owner():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_owner(): ethereum.CallResult<Address> {
-    let result = super.tryCall("owner", "owner():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  priceBondCurve(): BigInt {
-    let result = super.call("priceBondCurve", "priceBondCurve():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_priceBondCurve(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "priceBondCurve",
-      "priceBondCurve():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  supplyNOM(): BigInt {
-    let result = super.call("supplyNOM", "supplyNOM():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_supplyNOM(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("supplyNOM", "supplyNOM():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  getNOMAddr(): Address {
-    let result = super.call("getNOMAddr", "getNOMAddr():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_getNOMAddr(): ethereum.CallResult<Address> {
-    let result = super.tryCall("getNOMAddr", "getNOMAddr():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  getSupplyNOM(): BigInt {
-    let result = super.call("getSupplyNOM", "getSupplyNOM():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_getSupplyNOM(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("getSupplyNOM", "getSupplyNOM():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  getBondPrice(): BigInt {
-    let result = super.call("getBondPrice", "getBondPrice():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_getBondPrice(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("getBondPrice", "getBondPrice():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  tokToF64(token: BigInt): BigInt {
-    let result = super.call("tokToF64", "tokToF64(uint256):(int128)", [
-      ethereum.Value.fromUnsignedBigInt(token)
+  buyQuoteETH(amountETH: BigInt): BigInt {
+    let result = super.call("buyQuoteETH", "buyQuoteETH(uint256):(uint256)", [
+      ethereum.Value.fromUnsignedBigInt(amountETH)
     ]);
 
     return result[0].toBigInt();
   }
 
-  try_tokToF64(token: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("tokToF64", "tokToF64(uint256):(int128)", [
-      ethereum.Value.fromUnsignedBigInt(token)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  f64ToTok(fixed64: BigInt): BigInt {
-    let result = super.call("f64ToTok", "f64ToTok(int128):(uint256)", [
-      ethereum.Value.fromSignedBigInt(fixed64)
-    ]);
-
-    return result[0].toBigInt();
-  }
-
-  try_f64ToTok(fixed64: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("f64ToTok", "f64ToTok(int128):(uint256)", [
-      ethereum.Value.fromSignedBigInt(fixed64)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  priceAtSupply(_supplyNOM: BigInt): BigInt {
-    let result = super.call(
-      "priceAtSupply",
-      "priceAtSupply(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(_supplyNOM)]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_priceAtSupply(_supplyNOM: BigInt): ethereum.CallResult<BigInt> {
+  try_buyQuoteETH(amountETH: BigInt): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "priceAtSupply",
-      "priceAtSupply(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(_supplyNOM)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  supplyAtPrice(price: BigInt): BigInt {
-    let result = super.call(
-      "supplyAtPrice",
-      "supplyAtPrice(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(price)]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_supplyAtPrice(price: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "supplyAtPrice",
-      "supplyAtPrice(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(price)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  NOMSupToETH(supplyTop: BigInt, supplyBot: BigInt): BigInt {
-    let result = super.call(
-      "NOMSupToETH",
-      "NOMSupToETH(uint256,uint256):(uint256)",
-      [
-        ethereum.Value.fromUnsignedBigInt(supplyTop),
-        ethereum.Value.fromUnsignedBigInt(supplyBot)
-      ]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_NOMSupToETH(
-    supplyTop: BigInt,
-    supplyBot: BigInt
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "NOMSupToETH",
-      "NOMSupToETH(uint256,uint256):(uint256)",
-      [
-        ethereum.Value.fromUnsignedBigInt(supplyTop),
-        ethereum.Value.fromUnsignedBigInt(supplyBot)
-      ]
+      "buyQuoteETH",
+      "buyQuoteETH(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(amountETH)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -397,19 +229,134 @@ export class BondingNOM extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  buyQuoteETH(amountETH: BigInt): BigInt {
-    let result = super.call("buyQuoteETH", "buyQuoteETH(uint256):(uint256)", [
-      ethereum.Value.fromUnsignedBigInt(amountETH)
+  decimals(): i32 {
+    let result = super.call("decimals", "decimals():(uint8)", []);
+
+    return result[0].toI32();
+  }
+
+  try_decimals(): ethereum.CallResult<i32> {
+    let result = super.tryCall("decimals", "decimals():(uint8)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
+  f64ToTok(fixed64: BigInt): BigInt {
+    let result = super.call("f64ToTok", "f64ToTok(int128):(uint256)", [
+      ethereum.Value.fromSignedBigInt(fixed64)
     ]);
 
     return result[0].toBigInt();
   }
 
-  try_buyQuoteETH(amountETH: BigInt): ethereum.CallResult<BigInt> {
+  try_f64ToTok(fixed64: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("f64ToTok", "f64ToTok(int128):(uint256)", [
+      ethereum.Value.fromSignedBigInt(fixed64)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getBondPrice(): BigInt {
+    let result = super.call("getBondPrice", "getBondPrice():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getBondPrice(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("getBondPrice", "getBondPrice():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getNOMAddr(): Address {
+    let result = super.call("getNOMAddr", "getNOMAddr():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_getNOMAddr(): ethereum.CallResult<Address> {
+    let result = super.tryCall("getNOMAddr", "getNOMAddr():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  getSupplyNOM(): BigInt {
+    let result = super.call("getSupplyNOM", "getSupplyNOM():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getSupplyNOM(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("getSupplyNOM", "getSupplyNOM():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  owner(): Address {
+    let result = super.call("owner", "owner():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_owner(): ethereum.CallResult<Address> {
+    let result = super.tryCall("owner", "owner():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  priceAtSupply(_supplyNOM: BigInt): BigInt {
+    let result = super.call(
+      "priceAtSupply",
+      "priceAtSupply(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_supplyNOM)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_priceAtSupply(_supplyNOM: BigInt): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "buyQuoteETH",
-      "buyQuoteETH(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(amountETH)]
+      "priceAtSupply",
+      "priceAtSupply(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_supplyNOM)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  priceBondCurve(): BigInt {
+    let result = super.call("priceBondCurve", "priceBondCurve():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_priceBondCurve(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "priceBondCurve",
+      "priceBondCurve():(uint256)",
+      []
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -439,6 +386,44 @@ export class BondingNOM extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  supplyAtPrice(price: BigInt): BigInt {
+    let result = super.call(
+      "supplyAtPrice",
+      "supplyAtPrice(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(price)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_supplyAtPrice(price: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "supplyAtPrice",
+      "supplyAtPrice(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(price)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  supplyNOM(): BigInt {
+    let result = super.call("supplyNOM", "supplyNOM():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_supplyNOM(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("supplyNOM", "supplyNOM():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   teamBalance(): BigInt {
     let result = super.call("teamBalance", "teamBalance():(uint256)", []);
 
@@ -447,6 +432,25 @@ export class BondingNOM extends ethereum.SmartContract {
 
   try_teamBalance(): ethereum.CallResult<BigInt> {
     let result = super.tryCall("teamBalance", "teamBalance():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  tokToF64(token: BigInt): BigInt {
+    let result = super.call("tokToF64", "tokToF64(uint256):(int128)", [
+      ethereum.Value.fromUnsignedBigInt(token)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_tokToF64(token: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("tokToF64", "tokToF64(uint256):(int128)", [
+      ethereum.Value.fromUnsignedBigInt(token)
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -500,6 +504,40 @@ export class ConstructorCall__Outputs {
   }
 }
 
+export class BuyNOMCall extends ethereum.Call {
+  get inputs(): BuyNOMCall__Inputs {
+    return new BuyNOMCall__Inputs(this);
+  }
+
+  get outputs(): BuyNOMCall__Outputs {
+    return new BuyNOMCall__Outputs(this);
+  }
+}
+
+export class BuyNOMCall__Inputs {
+  _call: BuyNOMCall;
+
+  constructor(call: BuyNOMCall) {
+    this._call = call;
+  }
+
+  get estAmountNOM(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get allowSlip(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class BuyNOMCall__Outputs {
+  _call: BuyNOMCall;
+
+  constructor(call: BuyNOMCall) {
+    this._call = call;
+  }
+}
+
 export class RenounceOwnershipCall extends ethereum.Call {
   get inputs(): RenounceOwnershipCall__Inputs {
     return new RenounceOwnershipCall__Inputs(this);
@@ -522,6 +560,44 @@ export class RenounceOwnershipCall__Outputs {
   _call: RenounceOwnershipCall;
 
   constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class SellNOMCall extends ethereum.Call {
+  get inputs(): SellNOMCall__Inputs {
+    return new SellNOMCall__Inputs(this);
+  }
+
+  get outputs(): SellNOMCall__Outputs {
+    return new SellNOMCall__Outputs(this);
+  }
+}
+
+export class SellNOMCall__Inputs {
+  _call: SellNOMCall;
+
+  constructor(call: SellNOMCall) {
+    this._call = call;
+  }
+
+  get amountNOM(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get estAmountETH(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get allowSlip(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class SellNOMCall__Outputs {
+  _call: SellNOMCall;
+
+  constructor(call: SellNOMCall) {
     this._call = call;
   }
 }
@@ -553,92 +629,6 @@ export class TransferOwnershipCall__Outputs {
 
   constructor(call: TransferOwnershipCall) {
     this._call = call;
-  }
-}
-
-export class BuyNOMCall extends ethereum.Call {
-  get inputs(): BuyNOMCall__Inputs {
-    return new BuyNOMCall__Inputs(this);
-  }
-
-  get outputs(): BuyNOMCall__Outputs {
-    return new BuyNOMCall__Outputs(this);
-  }
-}
-
-export class BuyNOMCall__Inputs {
-  _call: BuyNOMCall;
-
-  constructor(call: BuyNOMCall) {
-    this._call = call;
-  }
-}
-
-export class BuyNOMCall__Outputs {
-  _call: BuyNOMCall;
-
-  constructor(call: BuyNOMCall) {
-    this._call = call;
-  }
-}
-
-export class SellNOMCall extends ethereum.Call {
-  get inputs(): SellNOMCall__Inputs {
-    return new SellNOMCall__Inputs(this);
-  }
-
-  get outputs(): SellNOMCall__Outputs {
-    return new SellNOMCall__Outputs(this);
-  }
-}
-
-export class SellNOMCall__Inputs {
-  _call: SellNOMCall;
-
-  constructor(call: SellNOMCall) {
-    this._call = call;
-  }
-
-  get amountNOM(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class SellNOMCall__Outputs {
-  _call: SellNOMCall;
-
-  constructor(call: SellNOMCall) {
-    this._call = call;
-  }
-}
-
-export class TeamBalanceCall extends ethereum.Call {
-  get inputs(): TeamBalanceCall__Inputs {
-    return new TeamBalanceCall__Inputs(this);
-  }
-
-  get outputs(): TeamBalanceCall__Outputs {
-    return new TeamBalanceCall__Outputs(this);
-  }
-}
-
-export class TeamBalanceCall__Inputs {
-  _call: TeamBalanceCall;
-
-  constructor(call: TeamBalanceCall) {
-    this._call = call;
-  }
-}
-
-export class TeamBalanceCall__Outputs {
-  _call: TeamBalanceCall;
-
-  constructor(call: TeamBalanceCall) {
-    this._call = call;
-  }
-
-  get value0(): BigInt {
-    return this._call.outputValues[0].value.toBigInt();
   }
 }
 
