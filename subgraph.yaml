@@ -6,7 +6,7 @@ dataSources:
     name: BondingNOM
     network: 'rinkeby'
     source:
-      address: '0x2F05A5B07DC691284BC3329050A172fd148754cD'
+      address: '0x96a2967BF1548cad67268CdcC34cc75b9aA8E702'
       abi: BondingNOM
       startBlock: 8219137
     mapping:
@@ -19,6 +19,6 @@ dataSources:
         - name: BondingNOM
           file: ./abis/BondingNOM.json
       eventHandlers:
-        - event: Transaction(indexed address,uint256,uint256,uint256,uint256,string,int128)
+        - event: Transaction(indexed address,uint256,uint256,uint256,uint256,string,int256)
           handler: handleTransaction
       file: ./src/BondingNOM.ts
