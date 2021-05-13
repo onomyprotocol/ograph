@@ -191,25 +191,6 @@ export class BondingNOM extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  cubrt(x: BigInt): BigInt {
-    let result = super.call("cubrt", "cubrt(int128):(int128)", [
-      ethereum.Value.fromSignedBigInt(x)
-    ]);
-
-    return result[0].toBigInt();
-  }
-
-  try_cubrt(x: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("cubrt", "cubrt(int128):(int128)", [
-      ethereum.Value.fromSignedBigInt(x)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   cubrtu(x: BigInt): BigInt {
     let result = super.call("cubrtu", "cubrtu(uint256):(uint256)", [
       ethereum.Value.fromUnsignedBigInt(x)

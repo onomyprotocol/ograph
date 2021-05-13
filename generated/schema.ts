@@ -96,15 +96,6 @@ export class TransactionRecord extends Entity {
     this.set("buyOrSell", Value.fromBoolean(value));
   }
 
-  get timestamp(): BigInt {
-    let value = this.get("timestamp");
-    return value.toBigInt();
-  }
-
-  set timestamp(value: BigInt) {
-    this.set("timestamp", Value.fromBigInt(value));
-  }
-
   get slippage(): BigInt {
     let value = this.get("slippage");
     return value.toBigInt();
@@ -112,5 +103,14 @@ export class TransactionRecord extends Entity {
 
   set slippage(value: BigInt) {
     this.set("slippage", Value.fromBigInt(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
   }
 }
