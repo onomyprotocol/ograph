@@ -1,6 +1,7 @@
-yarn.lock
-package-lock.json
+/.idea/
+/node_modules/
+/build/
 
-node_modules/
-generated/
-build/
+/package-lock.json
+/subgraph.yaml
+/yarn-error.log
