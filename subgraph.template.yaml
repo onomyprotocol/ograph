@@ -20,5 +20,5 @@ dataSources:
           file: ./abis/BondingNOM.json
       eventHandlers:
         - event: Transaction(indexed address,uint256,uint256,uint256,uint256,string,int256)
-          handler: handleTransaction
+          handler: handleBondingNOMTransactionEvent
       file: ./src/BondingNOM.ts

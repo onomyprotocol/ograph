@@ -1,50 +1,33 @@
-import { BigInt } from "@graphprotocol/graph-ts"
-import {
-  BondingNOM,
-  OwnershipTransferred,
-  Transaction
-} from "../generated/BondingNOM/BondingNOM"
-import { loadOrCreate } from "./helpers/BondingNOM"
+import {Transaction} from "../generated/BondingNOM/BondingNOM"
+import {WNOMTransaction} from "../generated/schema";
 
-export function handleOwnershipTransferred(event: OwnershipTransferred): void {
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.NOMTokenContract(...)
-  // - contract.a(...)
-  // - contract.decimals(...)
-  // - contract.owner(...)
-  // - contract.priceBondCurve(...)
-  // - contract.supplyNOM(...)
-  // - contract.getNOMAddr(...)
-  // - contract.getSupplyNOM(...)
-  // - contract.getBondPrice(...)
-  // - contract.tokToF64(...)
-  // - contract.f64ToTok(...)
-  // - contract.priceAtSupply(...)
-  // - contract.supplyAtPrice(...)
-  // - contract.NOMSupToETH(...)
-  // - contract.buyQuoteNOM(...)
-  // - contract.cubrt(...)
-  // - contract.cubrtu(...)
-  // - contract.buyQuoteETH(...)
-  // - contract.sellQuoteNOM(...)
-  // - contract.teamBalance(...)
-  // - contract.withdraw(...)
+export function handleBondingNOMTransactionEvent(event: Transaction): void {
+    updateWNOMTransactionEntity(event);
 }
 
-export function handleTransaction(event: Transaction): void {
-  loadOrCreate(event);
+function updateWNOMTransactionEntity(event: Transaction): void {
+    let timeStamp = event.block.timestamp;
+    // ID: ${msg.sender}-${timeStamp}-${buy/sell}
+    let id = join([event.params._by.toHexString(), timeStamp.toString(), event.params.buyOrSell.toString()]);
+
+    // duplicated entity
+    if (WNOMTransaction.load(id)) {
+        return;
+    }
+
+    let trx = new WNOMTransaction(id);
+    trx.timestamp = timeStamp;
+    trx.amountETH = event.params.amountETH;
+    trx.amountNOM = event.params.amountNOM;
+    trx.buyOrSell = event.params.buyOrSell === 'sell';
+    trx.senderAddress = event.params._by;
+    trx.price = event.params.price;
+    trx.supply = event.params.supply;
+    trx.slippage = event.params.slippage;
+
+    trx.save();
+}
+
+function join(args: Array<string>): string {
+    return args.join('-');
 }
