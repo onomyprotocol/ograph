@@ -1,11 +1,11 @@
-type TransactionRecord @entity {
+type WNOMTransaction @entity {
   id: ID!
   senderAddress: Bytes!
   amountNOM: BigInt!
   amountETH: BigInt!
   price: BigInt!
   supply: BigInt!
-  buyOrSell: Boolean! # 0: buy 1: sell
+  buyOrSell: Boolean! # buy = true, sell = false
   slippage: BigInt!
   timestamp: BigInt!
 }
