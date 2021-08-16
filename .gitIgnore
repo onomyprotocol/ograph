@@ -1,6 +1,7 @@
 /.idea/
-/node_modules/
+/coverage/
 /build/
+/node_modules/
 
 /package-lock.json
 /subgraph.yaml

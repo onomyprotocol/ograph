@@ -5,6 +5,7 @@
     "auth": "graph auth --product hosted-service",
     "codegen": "graph codegen",
     "build": "graph build",
+    "test": "jest",
     "prep:mainnet": "mustache networks/mainnet.json subgraph.template.yaml > subgraph.yaml && yarn codegen",
     "prep:rinkeby": "mustache networks/rinkeby.json subgraph.template.yaml > subgraph.yaml && yarn codegen",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/ograph",
@@ -15,9 +16,18 @@
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.21.1",
-    "@graphprotocol/graph-ts": "0.20.0"
+    "@graphprotocol/graph-ts": "0.20.0",
+    "assemblyscript": "0.19.10",
+    "jest": "^27.0.6",
+    "ts-node": "^10.2.0",
+    "typescript": "^4.3.5"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/jest": "^27.0.1",
+    "babel-jest": "^27.0.6",
     "mustache": "^4.1.0"
   }
 }
