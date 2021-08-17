@@ -1,8 +1,7 @@
 import {Transaction as WNOMTransactionEvent} from "../generated/BondingNOM/BondingNOM"
 import {WNOMHistoricalFrame, WNOMTransaction} from "../generated/schema";
-import {BigInt} from "@graphprotocol/graph-ts";
+import {BigInt, log} from "@graphprotocol/graph-ts";
 
-// TODO build class with mappings instead
 export enum FrameType {
     Minute
 }
@@ -35,7 +34,7 @@ export class Frame {
         }
 
         this.type = type
-        let roundedTimestamp = (Math.floor(timestamp / scale)) * scale as i32
+        let roundedTimestamp = (Math.trunc(timestamp / scale)) * scale as i32
         this.startTime = roundedTimestamp
         this.endTime = roundedTimestamp + scale - 1
     }
@@ -46,6 +45,7 @@ export class Frame {
 }
 
 export function handleBondingNOMTransactionEvent(event: WNOMTransactionEvent): void {
+    log.info("handle BondingNOM Transaction event, block number {}", [event.block.number.toString()])
     updateWNOMTransactionEntity(event);
     updateWNOMHistoricalFrame(event);
 }
@@ -64,7 +64,7 @@ export function updateWNOMTransactionEntity(event: WNOMTransactionEvent): void {
     trx.timestamp = timeStamp;
     trx.amountETH = event.params.amountETH;
     trx.amountNOM = event.params.amountNOM;
-    trx.buyOrSell = event.params.buyOrSell === 'sell';
+    trx.buyOrSell = event.params.buyOrSell.trim() == "buy";
     trx.senderAddress = event.params._by;
     trx.price = event.params.price;
     trx.supply = event.params.supply;
@@ -75,7 +75,6 @@ export function updateWNOMTransactionEntity(event: WNOMTransactionEvent): void {
 
 export function updateWNOMHistoricalFrame(event: WNOMTransactionEvent): void {
     let timeStamp = event.block.timestamp;
-
     let frameType = FrameType.Minute
     let frame = new Frame(timeStamp.toI32(), frameType)
 
@@ -86,35 +85,34 @@ export function updateWNOMHistoricalFrame(event: WNOMTransactionEvent): void {
     if (historicalFrame == null) {
         historicalFrame = new WNOMHistoricalFrame(id);
         historicalFrame.type = FrameType.toString(frameType);
-        historicalFrame.updateTime = timeStamp
-
-        // TODO handle if start is first second, then start price is not prev price it is current supply based price
         historicalFrame.startTime = BigInt.fromI32(frame.startTime)
-        historicalFrame.startPrice = computePrevPrice(event.params.buyOrSell, event.params.amountNOM, event.params.supply)
-
+        if (frame.startTime === timeStamp.toI32()) {
+            log.info("start frame {} time {} is equal to block time, compute start by supply", [frame.getID(), frame.startTime.toString()])
+            historicalFrame.startPrice = computePrice(event.params.supply)
+        } else {
+            log.info("start frame {} time {} compute start by prev supply", [frame.getID(), frame.startTime.toString()])
+            historicalFrame.startPrice = computePrevPrice(event.params.buyOrSell, event.params.amountNOM, event.params.supply)
+        }
         historicalFrame.endTime = BigInt.fromI32(frame.endTime)
-        historicalFrame.endPrice = computePrice(event.params.supply);
-
-        historicalFrame.save();
-        return
+        historicalFrame.transactionsCount = BigInt.fromI32(0)
     }
 
-    // TODO check that current update time is grater then in the event
+    historicalFrame.transactionsCount = historicalFrame.transactionsCount.plus(BigInt.fromI32(1))
     historicalFrame.updateTime = timeStamp
     historicalFrame.endPrice = computePrice(event.params.supply);
-
     historicalFrame.save();
 }
 
 function computePrevPrice(buyOrSell: string, amountNOM: BigInt, supply: BigInt): BigInt {
-    if (buyOrSell === "buy") {
+    if (buyOrSell.trim() == "buy") {
         return computePrice(supply.minus(amountNOM))
     }
     return computePrice(supply.plus(amountNOM))
 }
 
 export function computePrice(supply: BigInt): BigInt {
-    return supply.div(BigInt.fromI32(100_000_000)).pow(2)
+    // The expression is taken from the BoundingNOM contract - priceAtSupply.
+    return supply.div(BigInt.fromI32(100000000)).pow(2).div(BigInt.fromI32(10).pow(18))
 }
 
 function join(args: Array<string>): string {

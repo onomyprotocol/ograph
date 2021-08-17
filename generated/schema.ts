@@ -198,4 +198,13 @@ export class WNOMHistoricalFrame extends Entity {
   set endPrice(value: BigInt) {
     this.set("endPrice", Value.fromBigInt(value));
   }
+
+  get transactionsCount(): BigInt {
+    let value = this.get("transactionsCount");
+    return value.toBigInt();
+  }
+
+  set transactionsCount(value: BigInt) {
+    this.set("transactionsCount", Value.fromBigInt(value));
+  }
 }

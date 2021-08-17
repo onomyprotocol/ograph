@@ -22,4 +22,5 @@ type WNOMHistoricalFrame @entity {
   startPrice: BigInt!
   endTime: BigInt!
   endPrice: BigInt!
+  transactionsCount: BigInt!
 }

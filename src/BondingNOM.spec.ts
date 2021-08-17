@@ -1,11 +1,4 @@
-import {computePrice, Frame, FrameType} from './BondingNOM';
-
-import {
-    Transaction
-} from "../generated/BondingNOM/BondingNOM"
-
-import { WNOMTransaction } from "../generated/schema"
-import {BigInt} from "@graphprotocol/graph-ts";
+import {Frame, FrameType} from './BondingNOM';
 
 jest.mock('@graphprotocol/graph-ts', () => {
     return {
