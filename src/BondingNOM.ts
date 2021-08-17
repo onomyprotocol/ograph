@@ -2,11 +2,12 @@ import {Transaction as WNOMTransactionEvent} from "../generated/BondingNOM/Bondi
 import {WNOMHistoricalFrame, WNOMTransaction} from "../generated/schema";
 import {BigInt, log} from "@graphprotocol/graph-ts";
 
+// FrameType defines supported frame types.
 export enum FrameType {
     Minute
 }
 
-// Hint to let FrameType be string and be compilable at the same time
+// FrameType namespace provides toString method for enum FrameType.
 export namespace FrameType {
     export function toString(type: FrameType): string {
         switch (type) {
@@ -18,11 +19,13 @@ export namespace FrameType {
     }
 }
 
+// Frame holds the logic of time framing for supported types.
 export class Frame {
     type: FrameType;
     startTime: i32
     endTime: i32
 
+    // create frame based on timestamp and FrameType scale.
     constructor(timestamp: i32, type: FrameType) {
         let scale = 0
         switch (type) {
@@ -44,12 +47,14 @@ export class Frame {
     }
 }
 
+// handleBondingNOMTransactionEvent is an entrypoint for BoundingNom:Transaction Event.
 export function handleBondingNOMTransactionEvent(event: WNOMTransactionEvent): void {
     log.info("handle BondingNOM Transaction event, block number {}", [event.block.number.toString()])
     updateWNOMTransactionEntity(event);
     updateWNOMHistoricalFrame(event);
 }
 
+// updateWNOMTransactionEntity upserts all the BoundingNom:Transaction Events via WNOMTransaction entity.
 export function updateWNOMTransactionEntity(event: WNOMTransactionEvent): void {
     let timeStamp = event.block.timestamp;
     // ID: ${msg.sender}-${timeStamp}-${buy/sell}
@@ -73,12 +78,12 @@ export function updateWNOMTransactionEntity(event: WNOMTransactionEvent): void {
     trx.save();
 }
 
+// updateWNOMTransactionEntity upserts aggregated WNOMHistoricalFrames based on BoundingNom:Transaction Events.
 export function updateWNOMHistoricalFrame(event: WNOMTransactionEvent): void {
     let timeStamp = event.block.timestamp;
+    // currently only Minute interval is supported, will be extend in future
     let frameType = FrameType.Minute
     let frame = new Frame(timeStamp.toI32(), frameType)
-
-    // ID: ${type}-${startTime}
     let id = frame.getID();
 
     let historicalFrame = WNOMHistoricalFrame.load(id)
@@ -86,6 +91,7 @@ export function updateWNOMHistoricalFrame(event: WNOMTransactionEvent): void {
         historicalFrame = new WNOMHistoricalFrame(id);
         historicalFrame.type = FrameType.toString(frameType);
         historicalFrame.startTime = BigInt.fromI32(frame.startTime)
+        // in case start time eq block time the price is calculate based on current supply.
         if (frame.startTime === timeStamp.toI32()) {
             log.info("start frame {} time {} is equal to block time, compute start by supply", [frame.getID(), frame.startTime.toString()])
             historicalFrame.startPrice = computePrice(event.params.supply)
@@ -103,6 +109,7 @@ export function updateWNOMHistoricalFrame(event: WNOMTransactionEvent): void {
     historicalFrame.save();
 }
 
+// computePrevPrice computes the
 function computePrevPrice(buyOrSell: string, amountNOM: BigInt, supply: BigInt): BigInt {
     if (buyOrSell.trim() == "buy") {
         return computePrice(supply.minus(amountNOM))
@@ -110,8 +117,9 @@ function computePrevPrice(buyOrSell: string, amountNOM: BigInt, supply: BigInt):
     return computePrice(supply.plus(amountNOM))
 }
 
+// computePrice compute the token price (ETH/wNOM) based on supply.
+// The formula is taken from the BoundingNOM contract - priceAtSupply.
 export function computePrice(supply: BigInt): BigInt {
-    // The expression is taken from the BoundingNOM contract - priceAtSupply.
     return supply.div(BigInt.fromI32(100000000)).pow(2).div(BigInt.fromI32(10).pow(18))
 }
 
