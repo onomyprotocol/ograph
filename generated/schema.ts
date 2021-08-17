@@ -114,3 +114,97 @@ export class WNOMTransaction extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 }
+
+export class WNOMHistoricalFrame extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save WNOMHistoricalFrame entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save WNOMHistoricalFrame entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("WNOMHistoricalFrame", id.toString(), this);
+  }
+
+  static load(id: string): WNOMHistoricalFrame | null {
+    return store.get("WNOMHistoricalFrame", id) as WNOMHistoricalFrame | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get type(): string {
+    let value = this.get("type");
+    return value.toString();
+  }
+
+  set type(value: string) {
+    this.set("type", Value.fromString(value));
+  }
+
+  get updateTime(): BigInt {
+    let value = this.get("updateTime");
+    return value.toBigInt();
+  }
+
+  set updateTime(value: BigInt) {
+    this.set("updateTime", Value.fromBigInt(value));
+  }
+
+  get startTime(): BigInt {
+    let value = this.get("startTime");
+    return value.toBigInt();
+  }
+
+  set startTime(value: BigInt) {
+    this.set("startTime", Value.fromBigInt(value));
+  }
+
+  get startPrice(): BigInt {
+    let value = this.get("startPrice");
+    return value.toBigInt();
+  }
+
+  set startPrice(value: BigInt) {
+    this.set("startPrice", Value.fromBigInt(value));
+  }
+
+  get endTime(): BigInt {
+    let value = this.get("endTime");
+    return value.toBigInt();
+  }
+
+  set endTime(value: BigInt) {
+    this.set("endTime", Value.fromBigInt(value));
+  }
+
+  get endPrice(): BigInt {
+    let value = this.get("endPrice");
+    return value.toBigInt();
+  }
+
+  set endPrice(value: BigInt) {
+    this.set("endPrice", Value.fromBigInt(value));
+  }
+
+  get transactionsCount(): BigInt {
+    let value = this.get("transactionsCount");
+    return value.toBigInt();
+  }
+
+  set transactionsCount(value: BigInt) {
+    this.set("transactionsCount", Value.fromBigInt(value));
+  }
+}

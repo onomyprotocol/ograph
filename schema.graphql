@@ -9,3 +9,18 @@ type WNOMTransaction @entity {
   slippage: BigInt!
   timestamp: BigInt!
 }
+
+enum WNOMHistoricalFrameType {
+  Minute
+}
+
+type WNOMHistoricalFrame @entity {
+  id: ID!
+  type: WNOMHistoricalFrameType!
+  updateTime: BigInt!
+  startTime: BigInt!
+  startPrice: BigInt!
+  endTime: BigInt!
+  endPrice: BigInt!
+  transactionsCount: BigInt!
+}
