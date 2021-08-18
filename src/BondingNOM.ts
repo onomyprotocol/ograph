@@ -2,22 +2,25 @@ import {Transaction as WNOMTransactionEvent} from "../generated/BondingNOM/Bondi
 import {WNOMHistoricalFrame, WNOMTransaction} from "../generated/schema";
 import {BigInt, log} from "@graphprotocol/graph-ts";
 
-// FrameType defines supported frame types.
-export enum FrameType {
-    Minute
-}
-
-// FrameType namespace provides toString method for enum FrameType.
+// FrameType namespace provides constants and method for enum FrameType.
+// This the hint to let assemblyscript compile the enum operations.
 export namespace FrameType {
-    export function toString(type: FrameType): string {
-        switch (type) {
-            case FrameType.Minute:
-                return "Minute"
-            default:
-                throw new Error(`Unexpected WNOMHistoricalFrameType ${type}`);
-        }
+    export const Minute = "Minute",
+        QuarterHour = "QuarterHour",
+        Hour = "Hour",
+        Day = "Day"
+
+    export function all(): string[] {
+        return [
+            Minute,
+            QuarterHour,
+            Hour,
+            Day
+        ]
     }
 }
+
+export type FrameType = string
 
 // Frame holds the logic of time framing for supported types.
 export class Frame {
@@ -28,12 +31,21 @@ export class Frame {
     // create frame based on timestamp and FrameType scale.
     constructor(timestamp: i32, type: FrameType) {
         let scale = 0
-        switch (type) {
-            case FrameType.Minute:
-                scale = 60
-                break;
-            default:
-                throw new Error(`Unexpected WNOMHistoricalFrameType ${type}`);
+        if (type == FrameType.Minute) {
+            scale = 60
+        }
+        if (type == FrameType.QuarterHour) {
+            scale = 60 * 15
+        }
+        if (type == FrameType.Hour) {
+            scale = 60 * 60
+        }
+        if (type == FrameType.Day) {
+            scale = 60 * 60 * 24
+        }
+
+        if (scale == 0) {
+            throw new Error(`Unexpected WNOMHistoricalFrameType ${type}`);
         }
 
         this.type = type
@@ -43,7 +55,7 @@ export class Frame {
     }
 
     getID(): string {
-        return join([FrameType.toString(this.type), this.startTime.toString()])
+        return join([this.type, this.startTime.toString()])
     }
 }
 
@@ -81,32 +93,34 @@ export function updateWNOMTransactionEntity(event: WNOMTransactionEvent): void {
 // updateWNOMTransactionEntity upserts aggregated WNOMHistoricalFrames based on BoundingNom:Transaction Events.
 export function updateWNOMHistoricalFrame(event: WNOMTransactionEvent): void {
     let timeStamp = event.block.timestamp;
-    // currently only Minute interval is supported, will be extend in future
-    let frameType = FrameType.Minute
-    let frame = new Frame(timeStamp.toI32(), frameType)
-    let id = frame.getID();
+    let frameTypes = FrameType.all()
+    for (let i = 0; i < frameTypes.length; i++) {
+        let frameType = frameTypes[i]
+        let frame = new Frame(timeStamp.toI32(), frameType)
+        let id = frame.getID();
 
-    let historicalFrame = WNOMHistoricalFrame.load(id)
-    if (historicalFrame == null) {
-        historicalFrame = new WNOMHistoricalFrame(id);
-        historicalFrame.type = FrameType.toString(frameType);
-        historicalFrame.startTime = BigInt.fromI32(frame.startTime)
-        // in case start time eq block time the price is calculate based on current supply.
-        if (frame.startTime === timeStamp.toI32()) {
-            log.info("start frame {} time {} is equal to block time, compute start by supply", [frame.getID(), frame.startTime.toString()])
-            historicalFrame.startPrice = computePrice(event.params.supply)
-        } else {
-            log.info("start frame {} time {} compute start by prev supply", [frame.getID(), frame.startTime.toString()])
-            historicalFrame.startPrice = computePrevPrice(event.params.buyOrSell, event.params.amountNOM, event.params.supply)
+        let historicalFrame = WNOMHistoricalFrame.load(id)
+        if (historicalFrame == null) {
+            historicalFrame = new WNOMHistoricalFrame(id);
+            historicalFrame.type = frameType;
+            historicalFrame.startTime = BigInt.fromI32(frame.startTime)
+            // in case start time eq block time the price is calculate based on current supply.
+            if (frame.startTime === timeStamp.toI32()) {
+                log.info("start frame {} time {} is equal to block time, compute start by supply", [frame.getID(), frame.startTime.toString()])
+                historicalFrame.startPrice = computePrice(event.params.supply)
+            } else {
+                log.info("start frame {} time {} compute start by prev supply", [frame.getID(), frame.startTime.toString()])
+                historicalFrame.startPrice = computePrevPrice(event.params.buyOrSell, event.params.amountNOM, event.params.supply)
+            }
+            historicalFrame.endTime = BigInt.fromI32(frame.endTime)
+            historicalFrame.transactionsCount = BigInt.fromI32(0)
         }
-        historicalFrame.endTime = BigInt.fromI32(frame.endTime)
-        historicalFrame.transactionsCount = BigInt.fromI32(0)
-    }
 
-    historicalFrame.transactionsCount = historicalFrame.transactionsCount.plus(BigInt.fromI32(1))
-    historicalFrame.updateTime = timeStamp
-    historicalFrame.endPrice = computePrice(event.params.supply);
-    historicalFrame.save();
+        historicalFrame.transactionsCount = historicalFrame.transactionsCount.plus(BigInt.fromI32(1))
+        historicalFrame.updateTime = timeStamp
+        historicalFrame.endPrice = computePrice(event.params.supply);
+        historicalFrame.save();
+    }
 }
 
 // computePrevPrice computes the
