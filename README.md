@@ -19,5 +19,70 @@ Compiles a subgraph to WebAssembly.
 ### `yarn prep:mainnet`, `yarn prep:rinkeby`
 Generates subgraph.yaml based on subgraph template for the speicific network and network configuration
 
-### `yarn deploy`, `yarn deploy:rinkeby`
+### `yarn deploy`, `yarn deploy:debug`
 Deploys a subgraph to a Graph Node(onomyprotocol/ograph)
+
+# Playground
+
+The link to the Graph playground: https://thegraph.com/legacy-explorer/subgraph/onomyprotocol/ograph
+
+# Entities
+
+[schema.graphql](./schema.graphql)
+
+## WNOMTransaction
+
+The WNOMTransaction entity is the reflection of the BondingNOM Transaction event emitted by the contract. 
+
+### Query example
+
+```
+{
+  wnomtransactions(
+    first: 1000, 
+    skip: 0, 
+    orderBy: timestamp, 
+    orderDirection: desc
+  ) {
+    id
+    senderAddress
+    amountNOM
+    amountETH
+    price
+    supply
+    buyOrSell
+    slippage
+    timestamp
+  }
+}
+```
+
+## WNOMHistoricalFrame 
+
+WNOMHistoricalFrame is aggregated price change entities within the supported frames (Min, Hour, Day and etc).
+The aggregation is based on  BondingNOM Transaction event emitted by the contract, so in case there are no events
+within the frame, the frame won't exist.
+
+### Query example
+
+```
+{
+  wnomhistoricalFrames(
+    first: 1000, 
+    skip: 0,
+    where: { type: Minute },
+    orderBy: startTime, 
+    orderDirection:desc
+  ) {
+    id
+    type
+    updateTime
+    startTime
+    startPrice
+    endTime
+    endPrice
+    transactionsCount
+  }
+}
+
+```
