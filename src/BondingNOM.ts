@@ -4,7 +4,10 @@ import {BigInt, log} from "@graphprotocol/graph-ts";
 
 // FrameType defines supported frame types.
 export enum FrameType {
-    Minute
+    Minute,
+    QuarterHour,
+    Hour,
+    Day
 }
 
 // FrameType namespace provides toString method for enum FrameType.
@@ -13,6 +16,12 @@ export namespace FrameType {
         switch (type) {
             case FrameType.Minute:
                 return "Minute"
+            case FrameType.QuarterHour:
+                return "QuarterHour"
+            case FrameType.Hour:
+                return "Hour"
+            case FrameType.Day:
+                return "Day"
             default:
                 throw new Error(`Unexpected WNOMHistoricalFrameType ${type}`);
         }
@@ -31,6 +40,15 @@ export class Frame {
         switch (type) {
             case FrameType.Minute:
                 scale = 60
+                break;
+            case FrameType.QuarterHour:
+                scale = 60 * 15
+                break;
+            case FrameType.Hour:
+                scale = 60 * 60
+                break;
+            case FrameType.Day:
+                scale = 60 * 60 * 24
                 break;
             default:
                 throw new Error(`Unexpected WNOMHistoricalFrameType ${type}`);

@@ -12,6 +12,9 @@ type WNOMTransaction @entity {
 
 enum WNOMHistoricalFrameType {
   Minute
+  QuarterHour
+  Hour
+  Day
 }
 
 type WNOMHistoricalFrame @entity {
