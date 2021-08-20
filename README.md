@@ -81,8 +81,9 @@ within the frame, the frame won't exist.
     startPrice
     endTime
     endPrice
+    minPrice
+    maxPrice
     transactionsCount
   }
 }
-
 ```
