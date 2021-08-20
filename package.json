@@ -5,6 +5,7 @@
     "auth": "graph auth --product hosted-service",
     "codegen": "graph codegen",
     "build": "graph build",
+    "test": "asp --verbose",
     "prep:mainnet": "mustache networks/mainnet.json subgraph.template.yaml > subgraph.yaml && yarn codegen",
     "prep:rinkeby": "mustache networks/rinkeby.json subgraph.template.yaml > subgraph.yaml && yarn codegen",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/ograph",
@@ -14,10 +15,13 @@
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 onomyprotocol/ograph"
   },
   "dependencies": {
+    "@assemblyscript/loader": "^0.19.11",
     "@graphprotocol/graph-cli": "0.21.1",
     "@graphprotocol/graph-ts": "0.20.0"
   },
   "devDependencies": {
-    "mustache": "^4.1.0"
+    "mustache": "^4.1.0",
+    "@as-pect/cli": "^6.2.4",
+    "assemblyscript": "^0.19.11"
   }
 }
