@@ -26,4 +26,5 @@ jobs:
         run: |
           yarn install
           yarn prep:rinkeby
+          yarn test
           yarn build

@@ -14,7 +14,9 @@ enum WNOMHistoricalFrameType {
   Minute
   QuarterHour
   Hour
+  QuarterDay
   Day
+  Week
 }
 
 type WNOMHistoricalFrame @entity {
@@ -25,5 +27,7 @@ type WNOMHistoricalFrame @entity {
   startPrice: BigInt!
   endTime: BigInt!
   endPrice: BigInt!
+  minPrice: BigInt!
+  maxPrice: BigInt!
   transactionsCount: BigInt!
 }
