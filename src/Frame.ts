@@ -8,6 +8,7 @@ const day = 60 * 60 * 24
 
 export namespace FrameType {
     export const Minute = "Minute",
+        FiveMinute = "FiveMinute",
         QuarterHour = "QuarterHour",
         Hour = "Hour",
         QuarterDay = "QuarterDay",
@@ -17,6 +18,7 @@ export namespace FrameType {
     export function all(): string[] {
         return [
             Minute,
+            FiveMinute,
             QuarterHour,
             Hour,
             QuarterDay,
@@ -41,6 +43,9 @@ export class Frame {
 
         if (type == FrameType.Minute) {
             scale = min
+        }
+        if (type == FrameType.FiveMinute) {
+            scale = min * 5
         }
         if (type == FrameType.QuarterHour) {
             scale = min * 15

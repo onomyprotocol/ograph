@@ -7,6 +7,10 @@ describe('new Frame', () => {
         testNewFrame(FrameType.Minute, 1628085048, 1628085000, 1628085059, "Minute-1628085000")
     });
 
+    it("FiveMinute", () => {
+        testNewFrame(FrameType.FiveMinute, 1628085048, 1628085000, 1628085599, "FiveMinute-1628085000")
+    });
+
     it("QuarterHour", () => {
         testNewFrame(FrameType.QuarterHour, 1628085048, 1628084700, 1628085599, "QuarterHour-1628084700")
     });
