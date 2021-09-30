@@ -6,6 +6,7 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "test": "asp --verbose",
+    "prepare": "yarn codegen",
     "prep:mainnet": "mustache networks/mainnet.json subgraph.template.yaml > subgraph.yaml && yarn codegen",
     "prep:rinkeby": "mustache networks/rinkeby.json subgraph.template.yaml > subgraph.yaml && yarn codegen",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/ograph",
