@@ -1,13 +1,13 @@
-name: Deploy rinkeby
+name: Deploy devnet
 
 on:
   push:
     branches:
-      - 'dev'
+      - 'testnet'
 
 jobs:
-  deploy-rinkeby:
-    name: Deploy rinkeby
+  deploy-testnet:
+    name: Deploy testnet
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,10 +17,10 @@ jobs:
         with:
           node-version: '14'
           cache: 'yarn'
-      - name: Build and deploy rinkeby
+      - name: Build and deploy testnet
         run: |
           yarn install
-          yarn prep:rinkeby
+          yarn prep:testnet
           yarn build
           yarn auth ${{ secrets.GRAPH_DEPLOY_KEY }}
-          yarn deploy:debug
+          yarn deploy:testnet

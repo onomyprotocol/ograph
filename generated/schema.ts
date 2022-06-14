@@ -12,7 +12,7 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class WNOMTransaction extends Entity {
+export class BNOMTransaction extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -20,17 +20,17 @@ export class WNOMTransaction extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save WNOMTransaction entity without an ID");
+    assert(id !== null, "Cannot save BNOMTransaction entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save WNOMTransaction entity with non-string ID. " +
+      "Cannot save BNOMTransaction entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("WNOMTransaction", id.toString(), this);
+    store.set("BNOMTransaction", id.toString(), this);
   }
 
-  static load(id: string): WNOMTransaction | null {
-    return store.get("WNOMTransaction", id) as WNOMTransaction | null;
+  static load(id: string): BNOMTransaction | null {
+    return store.get("BNOMTransaction", id) as BNOMTransaction | null;
   }
 
   get id(): string {
@@ -115,7 +115,7 @@ export class WNOMTransaction extends Entity {
   }
 }
 
-export class WNOMHistoricalFrame extends Entity {
+export class BNOMHistoricalFrame extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -123,17 +123,17 @@ export class WNOMHistoricalFrame extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save WNOMHistoricalFrame entity without an ID");
+    assert(id !== null, "Cannot save BNOMHistoricalFrame entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save WNOMHistoricalFrame entity with non-string ID. " +
+      "Cannot save BNOMHistoricalFrame entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("WNOMHistoricalFrame", id.toString(), this);
+    store.set("BNOMHistoricalFrame", id.toString(), this);
   }
 
-  static load(id: string): WNOMHistoricalFrame | null {
-    return store.get("WNOMHistoricalFrame", id) as WNOMHistoricalFrame | null;
+  static load(id: string): BNOMHistoricalFrame | null {
+    return store.get("BNOMHistoricalFrame", id) as BNOMHistoricalFrame | null;
   }
 
   get id(): string {

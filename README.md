@@ -2,43 +2,53 @@
 
 `Graph-cli` and `mustache` is being used for genearting the Assemblyscript and subgraph yam specifiication
 
-## Prerequisites
-1) graph-cli : https://github.com/graphprotocol/graph-cli
-2) mustache : https://github.com/janl/mustache.js
-
 ## Available Scripts
 
 In the project directory, you can run:
 
+### `yarn install`
+
+Install dependencies.
+
+### `yarn prep:devnet`, `yarn prep:testnet`, `yarn prep:mainnet`
+
+Generates subgraph.yaml based on subgraph template for the specific env and network configuration
+
 ### `yarn codegen`
+
 Generates AssemblyScript types for smart contract ABIs and the subgraph schema.
 
 ### `yarn build`
+
 Compiles a subgraph to WebAssembly.
 
-### `yarn prep:mainnet`, `yarn prep:rinkeby`
-Generates subgraph.yaml based on subgraph template for the speicific network and network configuration
+### `yarn auth`
 
-### `yarn deploy`, `yarn deploy:debug`
-Deploys a subgraph to a Graph Node(onomyprotocol/ograph)
+Use the access token from the The Graph to allow the deployments.
+
+### `yarn deploy:devnet`, `yarn deploy:testnet`, `yarn deploy:mainnet`
+
+Deploys a subgraph to a Graph Node.
 
 # Playground
 
-The link to the Graph playground: https://thegraph.com/legacy-explorer/subgraph/onomyprotocol/ograph
+The link to the Graph playground: https://thegraph.com/legacy-explorer/subgraph/onomyprotocol/ograph-devnet
+The link to the Graph playground: https://thegraph.com/legacy-explorer/subgraph/onomyprotocol/ograph-tevnet
+The link to the Graph playground: https://thegraph.com/legacy-explorer/subgraph/onomyprotocol/ograph-mainnet
 
 # Entities
 
 [schema.graphql](./schema.graphql)
 
-## WNOMTransaction
+## BNOMTransaction
 
-The WNOMTransaction entity is the reflection of the BondingNOM Transaction event emitted by the contract. 
+The BNOMTransaction entity is the reflection of the BondingNOM Transaction event emitted by the contract.
 
 ### Query example
 
 ```
 {
-  wnomtransactions(
+  bnomtransactions(
     first: 1000, 
     skip: 0, 
     orderBy: timestamp, 
@@ -57,17 +67,17 @@ The WNOMTransaction entity is the reflection of the BondingNOM Transaction event
 }
 ```
 
-## WNOMHistoricalFrame 
+## BNOMHistoricalFrame
 
-WNOMHistoricalFrame is aggregated price change entities within the supported frames (Min, Hour, Day and etc).
-The aggregation is based on  BondingNOM Transaction event emitted by the contract, so in case there are no events
-within the frame, the frame won't exist.
+BNOMHistoricalFrame is aggregated price change entities within the supported frames (Min, Hour, Day and etc). The
+aggregation is based on BondingNOM Transaction event emitted by the contract, so in case there are no events within the
+frame, the frame won't exist.
 
 ### Query example
 
 ```
 {
-  wnomhistoricalFrames(
+  bnomhistoricalFrames(
     first: 1000, 
     skip: 0,
     where: { type: Minute },
@@ -87,3 +97,8 @@ within the frame, the frame won't exist.
   }
 }
 ```
+
+# CI/CD
+
+The repo supports the CI processes on the PR or merge to the 'dev', 'testnet', 'main' branches. Ans CD proces on the
+merge to the 'dev', 'testnet', 'main' branches with the deployment to the corresponding envs.

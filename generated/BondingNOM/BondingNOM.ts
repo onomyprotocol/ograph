@@ -149,6 +149,21 @@ export class BondingNOM extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  burnedNOM(): BigInt {
+    let result = super.call("burnedNOM", "burnedNOM():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_burnedNOM(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("burnedNOM", "burnedNOM():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   buyQuoteETH(amountETH: BigInt): BigInt {
     let result = super.call("buyQuoteETH", "buyQuoteETH(uint256):(uint256)", [
       ethereum.Value.fromUnsignedBigInt(amountETH)
