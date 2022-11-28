@@ -1,4 +1,4 @@
-type WNOMTransaction @entity {
+type BNOMTransaction @entity {
   id: ID!
   senderAddress: Bytes!
   amountNOM: BigInt!
@@ -10,7 +10,7 @@ type WNOMTransaction @entity {
   timestamp: BigInt!
 }
 
-enum WNOMHistoricalFrameType {
+enum BNOMHistoricalFrameType {
   Minute
   FiveMinute
   QuarterHour
@@ -20,9 +20,9 @@ enum WNOMHistoricalFrameType {
   Week
 }
 
-type WNOMHistoricalFrame @entity {
+type BNOMHistoricalFrame @entity {
   id: ID!
-  type: WNOMHistoricalFrameType!
+  type: BNOMHistoricalFrameType!
   updateTime: BigInt!
   startTime: BigInt!
   startPrice: BigInt!

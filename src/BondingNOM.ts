@@ -1,28 +1,28 @@
-import {Transaction as WNOMTransactionEvent} from "../generated/BondingNOM/BondingNOM"
-import {WNOMHistoricalFrame, WNOMTransaction} from "../generated/schema";
+import {Transaction as BNOMTransactionEvent} from "../generated/BondingNOM/BondingNOM"
+import {BNOMHistoricalFrame, BNOMTransaction} from "../generated/schema";
 import {BigInt, log} from "@graphprotocol/graph-ts";
 import {Frame, FrameType} from "./Frame";
 import {join} from "./utils";
 
 // handleBondingNOMTransactionEvent is an entrypoint for BoundingNom:Transaction Event.
-export function handleBondingNOMTransactionEvent(event: WNOMTransactionEvent): void {
+export function handleBondingNOMTransactionEvent(event: BNOMTransactionEvent): void {
     log.info("handle BondingNOM Transaction event, block number {}", [event.block.number.toString()])
-    updateWNOMTransactionEntity(event);
-    updateWNOMHistoricalFrame(event);
+    updateBNOMTransactionEntity(event);
+    updateBNOMHistoricalFrame(event);
 }
 
-// updateWNOMTransactionEntity upserts all the BoundingNom:Transaction Events via WNOMTransaction entity.
-export function updateWNOMTransactionEntity(event: WNOMTransactionEvent): void {
+// updateBNOMTransactionEntity upserts all the BoundingNom:Transaction Events via BNOMTransaction entity.
+export function updateBNOMTransactionEntity(event: BNOMTransactionEvent): void {
     let timeStamp = event.block.timestamp;
     // ID: ${msg.sender}-${timeStamp}-${buy/sell}
     let id = join([event.params._by.toHexString(), timeStamp.toString(), event.params.buyOrSell.toString()]);
 
     // duplicated entity
-    if (WNOMTransaction.load(id)) {
+    if (BNOMTransaction.load(id)) {
         return;
     }
 
-    let trx = new WNOMTransaction(id);
+    let trx = new BNOMTransaction(id);
     trx.timestamp = timeStamp;
     trx.amountETH = event.params.amountETH;
     trx.amountNOM = event.params.amountNOM;
@@ -35,17 +35,17 @@ export function updateWNOMTransactionEntity(event: WNOMTransactionEvent): void {
     trx.save();
 }
 
-// updateWNOMTransactionEntity upserts aggregated WNOMHistoricalFrames based on BoundingNom:Transaction Events.
-export function updateWNOMHistoricalFrame(event: WNOMTransactionEvent): void {
+// updateBNOMTransactionEntity upserts aggregated BNOMHistoricalFrames based on BoundingNom:Transaction Events.
+export function updateBNOMHistoricalFrame(event: BNOMTransactionEvent): void {
     let timeStamp = event.block.timestamp;
     let frameTypes = FrameType.all()
     for (let i = 0; i < frameTypes.length; i++) {
         let frameType = frameTypes[i]
         let frame = new Frame(timeStamp.toI32(), frameType)
         let id = frame.getID();
-        let frameEntity = WNOMHistoricalFrame.load(id)
+        let frameEntity = BNOMHistoricalFrame.load(id)
         if (frameEntity == null) {
-            frameEntity = new WNOMHistoricalFrame(id);
+            frameEntity = new BNOMHistoricalFrame(id);
             frameEntity.type = frameType;
             frameEntity.startTime = BigInt.fromI32(frame.startTime)
             // in case start time eq block time the price is calculate based on current supply.
@@ -80,7 +80,7 @@ function computePrevPrice(buyOrSell: string, amountNOM: BigInt, supply: BigInt):
     return computePrice(supply.plus(amountNOM))
 }
 
-// computePrice computes the token price (ETH/wNOM) based on supply.
+// computePrice computes the token price (ETH/bNOM) based on supply.
 // The formula is taken from the BoundingNOM contract - priceAtSupply.
 function computePrice(supply: BigInt): BigInt {
     return supply.div(BigInt.fromI32(100000000)).pow(2).div(BigInt.fromI32(10).pow(18))

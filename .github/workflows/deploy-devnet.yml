@@ -1,20 +1,13 @@
-name: CI
+name: Deploy devnet
 
 on:
   push:
     branches:
       - 'dev'
-      - 'testnet'
-      - 'main'
-  pull_request:
-    branches:
-      - 'dev'
-      - 'testnet'
-      - 'main'
 
 jobs:
-  ci:
-    name: ci
+  deploy-devnet:
+    name: Deploy devnet
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,9 +17,10 @@ jobs:
         with:
           node-version: '14'
           cache: 'yarn'
-      - name: Build
+      - name: Build and deploy devnet
         run: |
           yarn install
           yarn prep:devnet
-          yarn test
           yarn build
+          yarn auth ${{ secrets.GRAPH_DEPLOY_KEY }}
+          yarn deploy:devnet

@@ -1,0 +1,5 @@
+{
+  "network": "goerli",
+  "BondingNOM": "0xD179c5BEd30cADE4E62d53DD89240745Fb4C0CC2",
+  "BondingNOMStartBlock": 6990000
+}

@@ -70,7 +70,7 @@ export class Frame {
         }
 
         if (scale == 0) {
-            throw new Error(`Unexpected WNOMHistoricalFrameType ${type}`);
+            throw new Error(`Unexpected BNOMHistoricalFrameType ${type}`);
         }
 
         this.type = type
