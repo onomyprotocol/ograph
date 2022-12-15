@@ -2,7 +2,8 @@
   "name": "ograph",
   "license": "UNLICENSED",
   "scripts": {
-    "auth": "graph auth --product hosted-service",
+    "auth-hosted": "graph auth --product hosted-service",
+    "auth": "graph auth --studio",
     "codegen": "graph codegen",
     "build": "graph build",
     "test": "asp --verbose",
@@ -12,6 +13,7 @@
     "deploy:devnet": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/ograph-devnet",
     "deploy:testnet": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/ograph-testnet",
     "deploy:mainnet": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ onomyprotocol/ograph-mainnet",
+    "deploy:studio": "graph deploy --studio ograph-mainnet",
     "create-local": "graph create --node http://localhost:8020/ onomyprotocol/ograph-devnet",
     "remove-local": "graph remove --node http://localhost:8020/ onomyprotocol/ograph-devnet",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 onomyprotocol/ograph-devnet"
